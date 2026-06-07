@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
 
-FON_LISTESI = ["AEV", "AEV", "AK3", "BIO", "BUY", "DHJ", "GKV", "GMR", "GRT", "GSP", "HGM", "HRZ", "HVS", "ICZ", "IHK", "IIH", "IVF", "KLH", "KPC", "MAC", "MHF", "NNF", "RBH", "TCD", "TI2", "TI3", "TLZ", "YHK", "YHZ"]
+FON_LISTESI = ["AEV", "AEV", "AK3", "BIO", "BUY", "DHJ", "GKV", "GMR", "GRT", "GSP", "GTM", "HGM", "HRZ", "HVS", "ICZ", "IHK", "IIH", "IVF", "KLH", "KPC", "MAC", "MHF",  "RBH", "TCD", "TI2", "TI3", "TLZ", "YHK", "YHZ"]
 
 def temizle_ve_sayi_yap_adet(deger_str):
     deger_str = deger_str.strip().replace('.', '')
