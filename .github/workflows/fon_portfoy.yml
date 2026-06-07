@@ -1,0 +1,51 @@
+name: Fon Portföy Verisi Güncelle
+
+on:
+  schedule:
+    # Her gün saat 19:00 UTC (22:00 Türkiye saati) — borsa kapandıktan sonra
+    - cron: '0 19 * * 1-5'
+  workflow_dispatch:
+    # Elle de çalıştırılabilir (GitHub arayüzünden "Run workflow" butonu)
+
+jobs:
+  scrape-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: write   # JSON dosyasını repoya commit edebilmek için
+
+    steps:
+      - name: Repoyu çek
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Bağımlılıkları yükle
+        run: |
+          pip install playwright pandas openpyxl beautifulsoup4
+          playwright install firefox
+          playwright install-deps firefox
+
+      - name: Fintables oturumu için çerezleri ayarla
+        env:
+          FINTABLES_COOKIES: ${{ secrets.FINTABLES_COOKIES }}
+        run: |
+          # Eğer Fintables giriş gerektiriyorsa bu adımı kullan,
+          # gerektirmiyorsa bu adımı silebilirsin.
+          echo "Çerezler ayarlanıyor (gerekirse)..."
+
+      - name: Scripti çalıştır
+        run: python fon_portfoy_scraper.py
+
+      - name: JSON dosyasını repoya commit et
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add fonlar_portfoy_gecmisi.json
+          # Değişiklik yoksa commit atma
+          git diff --staged --quiet || git commit -m "chore: fon portföy verisi güncellendi [$(date '+%Y-%m-%d %H:%M')]"
+          git push
